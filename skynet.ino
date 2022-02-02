@@ -1,17 +1,6 @@
 // =================== ДРУГОЕ =================
-
-#include <Adafruit_MLX90614.h>
 #include <Wire.h>
-#include "MAX30105.h"
 #include "heartRate.h"
-
-MAX30105 particleSensor;
-#include <Adafruit_MLX90614.h>
-#include <Wire.h>
-#include "MAX30105.h"
-#include "heartRate.h"
-
-MAX30105 particleSensor;
 
 //const byte RATE_SIZE = 4; //Increase this for more averaging. 4 is good.
 //byte rates[RATE_SIZE]; //Array of heart rates
@@ -30,9 +19,15 @@ MAX30105 particleSensor;
 //Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 //  =============== ДРУГОЕ ==================
 
+// ============== ТЕМПЕРАТУРА =================
+#include <Adafruit_MLX90614.h> // Подключение библиотеки для датчика температуры
+#include "MAX30105.h" // Подключение библиотеки для температуры
+MAX30105 particleSensor; // Создания объекта "датчик температуры"
+// ============== ТЕМПЕРАТУРА =================
+
 // ============ OLED =============
-#include <GyverOLED.h>
-GyverOLED<SSD1306_128x64, OLED_BUFFER> oled; // Настройка OLED экрана
+#include <GyverOLED.h> // Подключение Библиотеки для OLED дисплея
+GyverOLED<SSD1306_128x64, OLED_BUFFER> oled; // Создания объекта дисплея с нужынми характеристиками
 // ============ OLED =============
 
 // ================== RFID ================
@@ -58,9 +53,9 @@ void setup() {
 
 // ====================== RFID-модуль ==================
     SPI.begin();      // Init SPI bus. MFRC522 Hardware uses SPI protocol
-    mfrc522.PCD_Init();    // Initialize MFRC522 Hardware
+    mfrc522.PCD_Init();    // Initialize MFRC522 Hardware 
     mfrc522.PCD_DumpVersionToSerial();  // Show details of PCD - MFRC522 Card Reader details
-    Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
+    Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks...")); // Печать в мониторе строки готовности RFID модуля к считыванию данных
 // ====================== RFID-модуль ================== 
  
 // ================= СИСТЕМА ИНДЕНТИФИКАЦИИ =============
@@ -85,18 +80,17 @@ void setup() {
 // ================= ДАТЧИК ПУЛЬСА ================= 
 
 // ======================= ДИСПЛЕЙ ===================================
-  oled.init(); // Инициализация олед дисплея
+  oled.init(); // Старт OLED дисплея
 
+  oled.clear(); // Очистка OLED дисплея от прошлых команд
+  oled.update(); // Обновление OLED дисплея
+  
+  oled.home(); // Возвращение дисплея в точку (0, 0)
 
-  oled.clear(); // Очистка OLED-дисплея
-  oled.update(); // Отправка сигнала на oled дисплей
-
-  oled.home();
-
-  oled.setScale(2);
-  oled.autoPrintln(false);
-  oled.print("Temperat");
-  oled.update();
+  oled.setScale(2); // Размер Шрифта равен 2 единицам
+  oled.autoPrintln(false); // Отключение автоматического переноса строки
+  oled.print("Temperat"); // Печать пробного текста
+  oled.update(); // Обновление OLED дисплея
 // ======================= ДИСПЛЕЙ ===================================
 
 }
