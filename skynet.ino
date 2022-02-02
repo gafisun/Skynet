@@ -1,22 +1,38 @@
 // =================== ДРУГОЕ =================
+
+#include <Adafruit_MLX90614.h>
+#include <Wire.h>
+#include "MAX30105.h"
 #include "heartRate.h"
 
+MAX30105 particleSensor;
+#include <Adafruit_MLX90614.h>
+#include <Wire.h>
+#include "MAX30105.h"
+#include "heartRate.h"
+
+MAX30105 particleSensor;
+
+//const byte RATE_SIZE = 4; //Increase this for more averaging. 4 is good.
+//byte rates[RATE_SIZE]; //Array of heart rates
+//byte rateSpot = 0;
+//long lastBeat = 0; //Time at which the last beat occurred
+//
+//float beatsPerMinute;
+//int beatAvg;
+//const byte RATE_SIZE = 4; //Increase this for more averaging. 4 is good.
+//byte rates[RATE_SIZE]; //Array of heart rates
+//byte rateSpot = 0;
+//long lastBeat = 0; //Time at which the last beat occurred
+//
+//float beatsPerMinute;
+//int beatAvg;
 //Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 //  =============== ДРУГОЕ ==================
 
-// ============================================ САТУРАЦИЯ ============================================
-#include <Wire.h> // Подключение библиотеки проводов
-#include "MAX30105.h" // Подключение библиотеки для датчика сатурации
-// ============================================ САТУРАЦИЯ ============================================
-
-// ============== ТЕМПЕРАТУРА =================
-#include <Adafruit_MLX90614.h> // Подключение библиотеки для датчика температуры
-MAX30105 particleSensor; // Создания объекта "датчик температуры"
-// ============== ТЕМПЕРАТУРА =================
-
 // ============ OLED =============
-#include <GyverOLED.h> // Подключение Библиотеки для OLED дисплея
-GyverOLED<SSD1306_128x64, OLED_BUFFER> oled; // Создания объекта дисплея с нужынми характеристиками
+#include <GyverOLED.h>
+GyverOLED<SSD1306_128x64, OLED_BUFFER> oled; // Настройка OLED экрана
 // ============ OLED =============
 
 // ================== RFID ================
@@ -42,94 +58,80 @@ void setup() {
 
 // ====================== RFID-модуль ==================
     SPI.begin();      // Init SPI bus. MFRC522 Hardware uses SPI protocol
-    mfrc522.PCD_Init();    // Initialize MFRC522 Hardware 
+    mfrc522.PCD_Init();    // Initialize MFRC522 Hardware
     mfrc522.PCD_DumpVersionToSerial();  // Show details of PCD - MFRC522 Card Reader details
-    Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks...")); // Печать в мониторе строки готовности RFID модуля к считыванию данных
-// ====================== RFID-модуль ================== 
- 
+    Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
+// ====================== RFID-модуль ==================
+
 // ================= СИСТЕМА ИНДЕНТИФИКАЦИИ =============
    Serial.println(F("Access Control Example v0.1"));   // For debugging purposes
    ShowReaderDetails();  // Show details of PCD - MFRC522 Card Reader details
 // ================= СИСТЕМА ИНДЕНТИФИКАЦИИ ==============
 
+// ================= ДАТЧИК ПУЛЬСА  =================
+  //  mlx.begin();
+//
+//    if (particleSensor.begin(Wire, I2C_SPEED_FAST) == false) //Use default I2C port, 400kHz speed
+//    {
+//        Serial.println("MAX30105 was not found. Please check wiring/power. ");
+//        while (1);
+//    }
+//    particleSensor.setup(); //Configure sensor with these settings
+//    particleSensor.setPulseAmplitudeRed(0x0A); //Turn Red LED to low to indicate sensor is running
+//    particleSensor.setPulseAmplitudeGreen(0); //Turn off Green LED
+// ================= ДАТЧИК ПУЛЬСА =================
+
 // ======================= ДИСПЛЕЙ ===================================
-  oled.init(); // Старт OLED дисплея
-
-  oled.clear(); // Очистка OLED дисплея от прошлых команд
-  oled.update(); // Обновление OLED дисплея
-  
-  oled.home(); // Возвращение дисплея в точку (0, 0)
-
-  oled.setScale(2); // Размер Шрифта равен 2 единицам
-  oled.autoPrintln(false); // Отключение автоматического переноса строки
-  oled.print("Temperat"); // Печать пробного текста
-  oled.update(); // Обновление OLED дисплея
+  oled.init(); // Инициализация олед дисплея
+  oled.clear(); // Очистка OLED-дисплея
+  oled.update(); // Отправка сигнала на oled дисплей
+  oled.home();
+  oled.setScale(2);
+  oled.autoPrintln(false);
+  oled.print("Temperat");
+  oled.update();
 // ======================= ДИСПЛЕЙ ===================================
-
-// ============================================ САТУРАЦИЯ ============================================
-if (particleSensor.begin() == false) // Проверка корректности подключение датчика
-  {
-    debug.println("MAX30105 не найден. Проверьте подключение/электричество. ");
-  }
-
-  //Setup to sense up to 18 inches, max LED brightness Основные константы, необходимые для подключения датчика
-  byte ledBrightness = 0xFF; //Options: 0=Off to 255=50mA Яркость светоидиода 
-  byte sampleAverage = 4; //Options: 1, 2, 4, 8, 16, 32 Количество измерений, из которого выводится среднее значение
-  byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green Режим работы датчика
-  int sampleRate = 400; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200 Тестовы
-  int pulseWidth = 411; //Options: 69, 118, 215, 411 
-
-  particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
-// ============================================ САТУРАЦИЯ ============================================
 }
-
 ///////////////////////////////////////// Main Loop ///////////////////////////////////
 void loop() {
-  
 // =============== ВЫВОД ТЕМПЕРАТУРЫ =========================
-//  oled.setCursor(0, 4);
-//  oled.setScale(3);
-//  oled.print(String((int)(mlx.readObjectTempC()*100)/100 ) +"."+String((int)(mlx.readObjectTempC()*100)/10%10));
-//  oled.update();
-//    long irValue = particleSensor.getIR();
-//
-//    if (checkForBeat(irValue) == true)
-//    {
-//        //We sensed a beat!
-//        long delta = millis() - lastBeat;
-//        lastBeat = millis();
-//
-//        beatsPerMinute = 60 / (delta / 1000.0);
-//
-//        if (beatsPerMinute < 255 && beatsPerMinute > 20)
-//        {
-//            rates[rateSpot++] = (byte)beatsPerMinute; //Store this reading in the array
-//            rateSpot %= RATE_SIZE; //Wrap variable
-//
-//            //Take average of readings
-//            beatAvg = 0;
-//            for (byte x = 0 ; x < RATE_SIZE ; x++)
-//                beatAvg += rates[x];
-//            beatAvg /= RATE_SIZE;
-//        }
-// =============== ВЫВОД ТЕМПЕРАТУРЫ =========================
+  oled.setCursor(0, 4);
+  oled.setScale(3);
+  oled.print(String((int)(mlx.readObjectTempC()*100)/100 ) +"."+String((int)(mlx.readObjectTempC()*100)/10%10));
+  oled.update();
+    long irValue = particleSensor.getIR();
 
-// ====================== RFID-модуль ==================  
+    if (checkForBeat(irValue) == true)
+    {
+        //We sensed a beat!
+        long delta = millis() - lastBeat;
+        lastBeat = millis();
+
+        beatsPerMinute = 60 / (delta / 1000.0);
+
+        if (beatsPerMinute < 255 && beatsPerMinute > 20)
+        {
+            rates[rateSpot++] = (byte)beatsPerMinute; //Store this reading in the array
+            rateSpot %= RATE_SIZE; //Wrap variable
+
+           //Take average of readings
+            beatAvg = 0;
+            for (byte x = 0 ; x < RATE_SIZE ; x++)
+                beatAvg += rates[x];
+           beatAvg /= RATE_SIZE;
+           Serial.println(beatAvg);
+              }
+// =============== ВЫВОД ТЕМПЕРАТУРЫ =========================
+// ====================== RFID-модуль ==================
 // Look for new cards Поиск новых карт
   if ( ! mfrc522.PICC_IsNewCardPresent()) {
     return;
   }
-  
 // Select one of the cards Выбор карты
   if ( ! mfrc522.PICC_ReadCardSerial()) {
     return;
   }
-    // Dump debug info about the card; PICC_HaltA() is automatically called 
+    // Dump debug info about the card; PICC_HaltA() is automatically called
    mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
  // ====================== RFID-модуль ==================
-
-// ============================================ САТУРАЦИЯ ============================================
-
-// ============================================ САТУРАЦИЯ ============================================
- 
 }
