@@ -1,17 +1,16 @@
  // =================== ДРУГОЕ =================
 #include "heartRate.h"
-
-//Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 //  =============== ДРУГОЕ ==================
 
 // ============================================ САТУРАЦИЯ ============================================
 #include <Wire.h> // Подключение библиотеки проводов
 #include "MAX30105.h" // Подключение библиотеки для датчика сатурации
+MAX30105 particleSensor; // Создания объекта "датчик температуры"
 // ============================================ САТУРАЦИЯ ============================================
 
 // ============== ТЕМПЕРАТУРА =================
 #include <Adafruit_MLX90614.h> // Подключение библиотеки для датчика температуры
-MAX30105 particleSensor; // Создания объекта "датчик температуры"
+Adafruit_MLX90614 ml = Adafruit_MLX90614();
 // ============== ТЕМПЕРАТУРА =================
 
 // ============ OLED =============
@@ -39,16 +38,20 @@ void setup() {
 // ============== Protocol Configuration =============
     Serial.begin(9600); // Старт монитора
 // ============== Protocol Configuration =============
+if (!ml.begin()) {
+    Serial.println("Error connecting to MLX sensor. Check wiring.");
+    while (1);
+  };
 
 // ====================== RFID-модуль ==================
     SPI.begin();      // Init SPI bus. MFRC522 Hardware uses SPI protocol
     mfrc522.PCD_Init();    // Initialize MFRC522 Hardware 
     mfrc522.PCD_DumpVersionToSerial();  // Show details of PCD - MFRC522 Card Reader details
-    Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks...")); // Печать в мониторе строки готовности RFID модуля к считыванию данных
+    Serial.println("Scan PICC to see UID, SAK, type, and data blocks..."); // Печать в мониторе строки готовности RFID модуля к считыванию данных
 // ====================== RFID-модуль ================== 
  
 // ================= СИСТЕМА ИНДЕНТИФИКАЦИИ =============
-//   Serial.println(F("Access Control Example v0.1"));   // For debugging purposes
+Serial.println("Access Control Example v0.1");   // For debugging purposes
 //   ShowReaderDetails();  // Show details of PCD - MFRC522 Card Reader details
 // ================= СИСТЕМА ИНДЕНТИФИКАЦИИ ==============
 
@@ -62,8 +65,8 @@ void setup() {
 
   oled.setScale(2); // Размер Шрифта равен 2 единицам
   oled.autoPrintln(false); // Отключение автоматического переноса строки
-  oled.print("Temperat"); // Печать пробного текста
-  oled.update(); // Обновление OLED дисплея
+  oled.print("Прив"); // Печать пробного текста
+  oled.update(); // Обновление OLED дисплеяы
 // ======================= ДИСПЛЕЙ ===================================
 
 // ============================================ САТУРАЦИЯ ============================================
@@ -84,31 +87,10 @@ void setup() {
 void loop() {
   
 // =============== ВЫВОД ТЕМПЕРАТУРЫ =========================
-//  oled.setCursor(0, 4);
-//  oled.setScale(3);
-//  oled.print(String((int)(mlx.readObjectTempC()*100)/100 ) +"."+String((int)(mlx.readObjectTempC()*100)/10%10));
-//  oled.update();
-//    long irValue = particleSensor.getIR();
-//
-//    if (checkForBeat(irValue) == true)
-//    {
-//        //We sensed a beat!
-//        long delta = millis() - lastBeat;
-//        lastBeat = millis();
-//
-//        beatsPerMinute = 60 / (delta / 1000.0);
-//
-//        if (beatsPerMinute < 255 && beatsPerMinute > 20)
-//        {
-//            rates[rateSpot++] = (byte)beatsPerMinute; //Store this reading in the array
-//            rateSpot %= RATE_SIZE; //Wrap variable
-//
-//            //Take average of readings
-//            beatAvg = 0;
-//            for (byte x = 0 ; x < RATE_SIZE ; x++)
-//                beatAvg += rates[x];
-//            beatAvg /= RATE_SIZE;
-//        }
+  oled.setCursor(0, 4);
+  oled.setScale(3);
+oled.print(String((int)ml.readObjectTempC()));
+  oled.update();
 // =============== ВЫВОД ТЕМПЕРАТУРЫ =========================
 
 // ====================== RFID-модуль ==================  
@@ -122,7 +104,7 @@ void loop() {
     return;
   }
     // Dump debug info about the card; PICC_HaltA() is automatically called 
-//   mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
+   mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
  // ====================== RFID-модуль ==================
 
 // ============================================ САТУРАЦИЯ ============================================
