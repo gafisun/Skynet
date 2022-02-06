@@ -1,4 +1,4 @@
-// =================== ДРУГОЕ =================
+ // =================== ДРУГОЕ =================
 #include "heartRate.h"
 
 //Adafruit_MLX90614 mlx = Adafruit_MLX90614();
@@ -48,8 +48,8 @@ void setup() {
 // ====================== RFID-модуль ================== 
  
 // ================= СИСТЕМА ИНДЕНТИФИКАЦИИ =============
-   Serial.println(F("Access Control Example v0.1"));   // For debugging purposes
-   ShowReaderDetails();  // Show details of PCD - MFRC522 Card Reader details
+//   Serial.println(F("Access Control Example v0.1"));   // For debugging purposes
+//   ShowReaderDetails();  // Show details of PCD - MFRC522 Card Reader details
 // ================= СИСТЕМА ИНДЕНТИФИКАЦИИ ==============
 
 // ======================= ДИСПЛЕЙ ===================================
@@ -67,19 +67,16 @@ void setup() {
 // ======================= ДИСПЛЕЙ ===================================
 
 // ============================================ САТУРАЦИЯ ============================================
-if (particleSensor.begin() == false) // Проверка корректности подключение датчика
-  {
-    debug.println("MAX30105 не найден. Проверьте подключение/электричество. ");
-  }
 
   //Setup to sense up to 18 inches, max LED brightness Основные константы, необходимые для подключения датчика
-  byte ledBrightness = 0xFF; //Options: 0=Off to 255=50mA Яркость светоидиода 
-  byte sampleAverage = 4; //Options: 1, 2, 4, 8, 16, 32 Количество измерений, из которого выводится среднее значение
-  byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green Режим работы датчика
-  int sampleRate = 400; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200 Тестовы
-  int pulseWidth = 411; //Options: 69, 118, 215, 411 
+//  byte ledBrightness = 0xFF; //Options: 0=Off to 255=50mA Яркость светоидиода 
+// byte sampleAverage = 4; //Options: 1, 2, 4, 8, 16, 32 Количество измерений, из которого выводится среднее значение
+//  byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green Режим работы датчика
+// int sampleRate = 400; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200 Тестовы
+//  int pulseWidth = 411; //Options: 69, 118, 215, 411 
+//  int adcRange = 2048; //Options: 2048, 4096, 8192, 16384
 
-  particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
+//  particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
 // ============================================ САТУРАЦИЯ ============================================
 }
 
@@ -125,7 +122,7 @@ void loop() {
     return;
   }
     // Dump debug info about the card; PICC_HaltA() is automatically called 
-   mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
+//   mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
  // ====================== RFID-модуль ==================
 
 // ============================================ САТУРАЦИЯ ============================================
