@@ -70,16 +70,20 @@ Serial.println("Access Control Example v0.1");   // For debugging purposes
 // ======================= ДИСПЛЕЙ ===================================
 
 // ============================================ САТУРАЦИЯ ============================================
-
-  //Setup to sense up to 18 inches, max LED brightness Основные константы, необходимые для подключения датчика
-//  byte ledBrightness = 0xFF; //Options: 0=Off to 255=50mA Яркость светоидиода 
-// byte sampleAverage = 4; //Options: 1, 2, 4, 8, 16, 32 Количество измерений, из которого выводится среднее значение
-//  byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green Режим работы датчика
-// int sampleRate = 400; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200 Тестовы
-//  int pulseWidth = 411; //Options: 69, 118, 215, 411 
-//  int adcRange = 2048; //Options: 2048, 4096, 8192, 16384
-
-//  particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
+//Setup to sense up to 18 inches, max LED brightness
+  byte ledBrightness = 0xFF; //Options: 0=Off to 255=50mA
+  byte sampleAverage = 4; //Options: 1, 2, 4, 8, 16, 32
+  byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
+  int sampleRate = 400; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
+  int pulseWidth = 411; //Options: 69, 118, 215, 411
+  int adcRange = 2048; //Options: 2048, 4096, 8192, 16384
+  
+if (particleSensor.begin() == false)
+  {
+    Serial.println("MAX30105 was not found. Please check wiring/power. ");
+    while (1);
+  }
+  particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
 // ============================================ САТУРАЦИЯ ============================================
 }
 
@@ -108,7 +112,8 @@ oled.print(String((int)ml.readObjectTempC()));
  // ====================== RFID-модуль ==================
 
 // ============================================ САТУРАЦИЯ ============================================
-
+particleSensor.check();
+particleSensor.nextSample();
 // ============================================ САТУРАЦИЯ ============================================
  
 }
