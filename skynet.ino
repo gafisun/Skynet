@@ -1,7 +1,6 @@
 // =================== ДРУГОЕ =================
 #include "heartRate.h"
 
-
 // ============================================ САТУРАЦИЯ ============================================
 #include <Wire.h> // Подключение библиотеки проводов
 #include "MAX30105.h" // Подключение библиотеки для датчика сатурации
@@ -30,6 +29,11 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 byte storedCard[4];   // Stores an ID read from EEPROM
 byte readCard[4];   // Stores scanned ID read from RFID Module
 byte masterCard[4];   // Stores master card's ID read from EEPROM
+
+// ============================================ WIFI ============================================
+#include <WiFi.h>
+const char* ssid = "****";// вместо * имя вашего WiFi
+const char* password = "****"; //  вместо * пароль от вашего WiFi
 
 
 ///////////////////////////////////////// Setup ///////////////////////////////////
@@ -63,7 +67,7 @@ void setup() {
 
   oled.setScale(2); // Размер Шрифта равен 2 единицам
   oled.autoPrintln(false); // Отключение автоматического переноса строки
-  oled.print("Прив"); // Печать пробного текста
+  oled.print("Температура"); // Печать пробного текста
   oled.update(); // Обновление OLED дисплеяы
 
 
@@ -89,7 +93,32 @@ void setup() {
   pinMode( D0, INPUT);
   pinMode( LED_BUILTIN, OUTPUT);
 
-  // ============================================ РЕЖИМЫ РАБОТЫ ============================================
+// ============================================ WIFI ============================================
+  WiFi.begin(ssid, password); // Начинаем подключение к сети
+  // Проверяем статус. Если нет соединения, то выводим сообщение о подключении
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Соединяемся к WiFi-сети...");
+  }
+  Serial.println("Есть подключение к WiFi-сети");
+
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  Serial.print("Hostname: ");
+  Serial.println(WiFi.getHostname());
+
+  Serial.print("ESP Mac Address: ");
+  Serial.println(WiFi.macAddress());
+
+  Serial.print("Subnet Mask: ");
+  Serial.println(WiFi.subnetMask());
+
+  Serial.print("Gateway IP: ");
+  Serial.println(WiFi.gatewayIP());
+  
+  Serial.print("DNS: ");
+  Serial.println(WiFi.dnsIP());
 }
 
 ///////////////////////////////////////// Main Loop ///////////////////////////////////
